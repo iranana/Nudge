@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nudge</title>
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700|Karla:400,400i,700,700i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./common.css" />
+    <link rel="stylesheet" href="./nudge.css" />
+</head>
+
+
+<body>
+    <a id="nudge-test-1">Alert!</a><br />
+    <a id="nudge-test-2">Prompt example</a><br />
+    <a id="nudge-test-3">Form wizard example</a>
+
+    <script src="./constraints.js"></script>
+    <script src="./nudge.js"></script>
+    <script>
+        window.onload = function () {
+            var firstScreen = function () {
+                new Nudge({
+                    id: 'first-form',
+                    title: "<h2>A form</h2>",
+                    content: "<p>This nudge has a boolean condition (i.e. ok/cancel), and a form.</p>",
+                    boolean: true,
+                    form: {
+                        fields: [
+                            {
+                                label: '<label for="title">Title</label>',
+                                input: '<select multiple="true" id="title" name="title" required>' +
+                                        '<option value="Mr.">Mr.</option>' +
+                                        '<option value="Mrs.">Mrs.</option>' +
+                                        '<option value="Ms.">Ms.</option>' +
+                                        '<option value="Dr.">Dr.</option>' +
+                                        '</select>'
+                            },
+                            {
+                                label: '<label for="date">Date</label>',
+                                input: '<input id="date" name="date" required type="date" step="5" />'
+                            },
+                            {
+                                label: '<label for="date">Datetime</label>',
+                                input: '<input id="date" name="datetime" required type="datetime-local" step="3" />'
+                            },
+                            {
+                                label: '<label for="month">Month</label>',
+                                input: '<input id="month" name="month" required type="month" step="2" />'
+                            },
+                            {
+                                label: '<label for="first-name">First name</label>',
+                                input: '<input id="first-name" name="first-name" required type="text" maxlength="10" pattern="[A-Za-z0-9]+" />'
+                            },
+                            {
+                                label: '<label for="text1">TEXT1</label>',
+                                input: '<textarea required id="text1" name="text1"></textarea>'
+                            },
+                            {
+                                label: '<label for="last-name">Last Name</label>',
+                                input: '<input id="last-name" name="last-name" required type="text" />'
+                            },
+                            {
+                                label: '<label for="age">Age</label>',
+                                input: '<input id="age" name="age" required type="number" step="5" min="5" max="100" />'
+                            },
+                            {
+                                label: '<label for="website">Website</label>',
+                                input: '<input id="website" name="website" required type="url" />'
+                            },
+                            {
+                                label: '<label for="spam">Yes/no</label>',
+                                input: '<input id="spam-yes" name="spam" required value="Yes" type="radio" /><label for="spam-yes">Yes</label><br />' +
+                                        '<input id="spam-no" name="spam" required value="No" type="radio" /><label for="spam-no">No</label>'
+                            },
+                            {
+                                label: '<label for="bear">Pick some bears</label>',
+                                input: '<input id="bear-1" name="bear" value="Brown bear" type="checkbox" /><label for="bear-1">Brown bear</label><br />' +
+                                        '<input id="bear-2" name="bear" value="Honey bear" type="checkbox" /><label for="bear-2">Honey bear</label><br />' +
+                                        '<input id="bear-3" name="bear" value="Grumpy bear" type="checkbox" /><label for="bear-3">Grumpy bear</label><br />' +
+                                        '<input id="bear-4" name="bear" value="Smelly bear" type="checkbox" /><label for="bear-4">Smelly bear</label><br />' +
+                                        '<input id="bear-5" name="bear" value="Fat bear" type="checkbox" /><label for="bear-5">Fat bear</label><br />',
+                            }
+                        ]
+                    },
+                    onConfirm: function (obj) { secondScreen(obj) },
+                    onCancel: function () { console.log('Doing nothing') }
+                });
+            };
+            var secondScreen = function (obj) {
+                var answers = document.createElement('ul');
+                for (var i = 0; i < obj.form.answers.length; i++) {
+                    var id = obj.form.answers[i].id;
+                    var label = obj.form.answers[i].label ? obj.form.answers[i].label.textContent : '';
+                    var value = obj.form.answers[i].value;
+                    var item = document.createElement('li');
+
+                    item.textContent = label + ': ' + value;
+                    answers.appendChild(item);
+                }
+                new Nudge({
+                    id: 'second-form',
+                    boolean: true,
+                    title: 'Confirmation',
+                    content: '<p>Please confirm the answers to the first form you filled in.</p>' + answers.outerHTML,
+                    onConfirm: function () {
+                        thirdScreen();
+                    },
+                    onCancel: function () {
+                        firstScreen();
+                    }
+                });
+            };
+            var thirdScreen = function () {
+                new Nudge({
+                    id: 'third-screen',
+                    boolean: false,
+                    title: 'Nice job!',
+                    content: 'You did the thing'
+                });
+            }
+
+            var alertTest = function () {
+                new Nudge({
+                    title: '<h2>Alert</h2>',
+                    content: '<p>Simple alert</p>'
+                });
+            }
+
+            var promptTest = function () {
+                new Nudge({
+                    id: 'delete-prompt',
+                    boolean: true,
+                    title: '<h2>Delete item</h2>',
+                    content: '<p>Are you sure you want to delete this?',
+                    onConfirm: function () {
+                        console.log('Thing deleted!');
+                    },
+                    onCancel: function () {
+                        console.log('Thing not deleted');
+                    }
+                });
+            }
+
+
+            var nudgeTest1 = document.getElementById('nudge-test-1');
+            nudgeTest1.addEventListener('click', function () {
+                alertTest();
+            });
+
+            var nudgeTest2 = document.getElementById('nudge-test-2');
+            nudgeTest2.addEventListener('click', function () {
+                promptTest();
+            });
+
+            var nudgeTest3 = document.getElementById('nudge-test-3');
+            nudgeTest3.addEventListener('click', function () {
+                firstScreen();
+            });
+        }
+    </script>
+</body>
+</html>
