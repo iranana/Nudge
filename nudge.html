@@ -39,6 +39,7 @@
                                         '<option value="Dr.">Dr.</option>' +
                                         '</select>'
                             },
+                            /*
                             {
                                 label: '<label for="date">Date</label>',
                                 input: '<input id="date" name="date" required type="date" step="5" />'
@@ -51,6 +52,7 @@
                                 label: '<label for="month">Month</label>',
                                 input: '<input id="month" name="month" required type="month" step="2" />'
                             },
+                            */
                             {
                                 label: '<label for="first-name">First name</label>',
                                 input: '<input id="first-name" name="first-name" required type="text" maxlength="10" pattern="[A-Za-z0-9]+" />'
@@ -86,7 +88,8 @@
                             }
                         ]
                     },
-                    onConfirm: function (obj) { secondScreen(obj) },
+                    //onConfirm: function (obj) { secondScreen(obj) },
+                    onConfirm: function () { var answers = Nudge.getAnswers('first-form'); console.log(answers); },
                     onCancel: function () { console.log('Doing nothing') }
                 });
             };

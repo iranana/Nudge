@@ -122,6 +122,9 @@
         });
 
         this.confirmButton.addEventListener('click', function () {
+            Nudge.destroy(this.id);
+            window.Nudges.push(this);
+
             if (this.form) {
                 this.validateForm();
 
@@ -134,8 +137,6 @@
             if (this.onConfirm) {
                 this.onConfirm(this);
             }
-            Nudge.destroy(this.id); // Destroy existing
-            window.Nudges.push(this); // Push new
             this.remove();
         }.bind(this));
 
@@ -152,6 +153,9 @@
     Render the nudge.
     */
     Nudge.prototype.render = function (data) {
+        Nudge.destroy(this.id);
+        window.Nudges.push(this);
+
         if (this.title) {
             this.inner.insertAdjacentHTML('afterbegin', this.title);
         }
